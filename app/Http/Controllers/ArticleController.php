@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ArticalResource;
 use Illuminate\Http\Request;
 use App\Models\Article;
 
@@ -39,8 +40,15 @@ class ArticleController extends Controller
             $query->whereDate('published_at', '<=', $request->to);
         }
 
-        return response()->json(
-            $query->orderByDesc('published_at')->paginate(20)
+        return ArticalResource::collection(
+            $query->orderByDesc('published_at')->paginate(50)
         );
+
+    }
+
+    public function categories()
+    {
+        $query = Article::select('category')->whereNotNull('category')->distinct()->orderBy('category', 'ASC')->get();
+        return response()->json($query);
     }
 }
